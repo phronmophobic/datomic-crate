@@ -1,4 +1,4 @@
-(defproject org.clojars.strad/datomic-crate "0.8.9-SNAPSHOT"
+(defproject org.clojars.phronmophobic/datomic-crate "0.8.10-SNAPSHOT"
   :description "A datomic crate for pallet"
   :url "http://github.com/rstradling/datomic-crate"
   :license {:name "Eclipse Public License"

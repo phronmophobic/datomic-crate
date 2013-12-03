@@ -38,7 +38,8 @@
    :config-path "/etc/datomic"
    :config {:protocol "free", :host "localhost" :port "4334"
             :data-dir "/var/lib/datomic/data"
-            :log-dir "/var/log/datomic"}})
+            :log-dir "/var/log/datomic"
+            :jvm-opts ""}})
 
 (defn- datomic-file-name
   "Returns the name of the datomic to download (minus the file extension)
@@ -88,8 +89,9 @@
                                   "or started networking)") 
    :respawn true 
    :script (str "chdir " (create-current-path datomic-root) "\n"
-                "exec sudo -u " user " bin/transactor " 
-                config-path "/" config-file-name " >> " (:log-dir config) 
+                "exec sudo -u " user " bin/transactor "
+                (:jvm-opts config)
+                config-path "/" config-file-name " >> " (:log-dir config)
                 "/datomic.log 2>&1")
    :stop-on (str "(stopping network-interface\n"
                "or stopping network-manager\n"
@@ -114,6 +116,7 @@
    -  :host The host for datomic to use
    -  :port The port to start datomic on (remember it will use 3 consecutive ports starting at port)
    -  :log-dir The log directory for datomic
+   -  :jvm-opts (string) java options to pass while starting transactor
    -  :data-dir The data directory for datomic
    -  :memory-index-max Optional"
   [{:keys [config-file config type version instance-id] :as settings}]
@@ -131,7 +134,6 @@
 (crate/defplan install
   "Install datomic"
   [& {:keys [instance-id]}]
-  (println "LSDFJLSDJFLSDJF")
   (let [
         settings (crate/get-settings :datomic {:instance-id instance-id :default ::no-settings})
         {:keys [version type user group config]} settings
@@ -185,7 +187,6 @@
 (defn server-spec 
   "Returns a service-spec for installing datomic"
   [sets & {:keys [instance-id] :as options}]
-  (println "HELRJELRJE")
   (api/server-spec :phases {:settings (api/plan-fn (settings sets))
                             :install (api/plan-fn
                                         (install)
