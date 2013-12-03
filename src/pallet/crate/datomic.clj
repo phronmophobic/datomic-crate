@@ -90,7 +90,7 @@
    :respawn true 
    :script (str "chdir " (create-current-path datomic-root) "\n"
                 "exec sudo -u " user " bin/transactor "
-                (:jvm-opts config)
+                (:jvm-opts config) " "
                 config-path "/" config-file-name " >> " (:log-dir config)
                 "/datomic.log 2>&1")
    :stop-on (str "(stopping network-interface\n"
