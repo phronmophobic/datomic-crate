@@ -167,22 +167,20 @@
                            :group group)))
 
 (crate/defplan restarter 
-  "Install datomic"
   [& {:keys [instance-id]}]
   (let [settings (crate/get-settings :datomic {:instance-id instance-id})]
-    (svc/service settings {:action :restart})
-    )
-  )
+    (svc/service settings {:action :restart})))
 
-;(crate/defplan restart
-;  "Restart datomic"
-;  [& {:keys [instance-id]}]
-;  (println "IN RESTART")
- ; (let [settings (crate/get-settings :datomic {:instance-id instance-id})]
-;    (println "Settings = " settings)
-;    (svc/service settings {:action :restart}))
+(crate/defplan starter
+  [& {:keys [instance-id]}]
+  (let [settings (crate/get-settings :datomic {:instance-id instance-id})]
+    (svc/service settings {:action :start})))
 
-;)
+(crate/defplan stopper
+  [& {:keys [instance-id]}]
+  (let [settings (crate/get-settings :datomic {:instance-id instance-id})]
+    (svc/service settings {:action :stop})))
+
 
 (defn server-spec 
   "Returns a service-spec for installing datomic"
@@ -193,8 +191,6 @@
                                        (upstart/install options))
                             :configure (api/plan-fn (upstart/configure options))
                             :restart (api/plan-fn (restarter))
-                            
-                                      }
-                   
-                   ))
+                            :start (api/plan-fn (starter))
+                            :stop (api/plan-fn (stopper))}))
 
